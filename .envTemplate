@@ -1,0 +1,2 @@
+ENV=development
+APOLLO_URI="<IP_ADRESS>:4000/graphql"
