@@ -1,4 +1,5 @@
-import { View, StyleSheet } from "react-native";
+import { View, Pressable, StyleSheet, Linking } from "react-native";
+import { useNavigate } from "react-router-native";
 import Text from "./Text";
 import Avatar from "./Avatar";
 import StatItem from "../StatItem";
@@ -29,6 +30,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 10,
   },
+  button: {
+    backgroundColor: theme.colors.primary,
+    alignItems: "center",
+    margin: 10,
+    padding: 10,
+    borderRadius: 5,
+  },
 });
 
 const formatNumber = (number) => {
@@ -36,33 +44,64 @@ const formatNumber = (number) => {
   else return number.toString();
 };
 
-const RepositoryItem = ({ item }) => {
+const RepositoryItem = ({ item, single, test = false }) => {
+  const navigate = !test ? useNavigate() : null;
+
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <Avatar source={item.ownerAvatarUrl} />
-        <View style={styles.mainInfo}>
-          <Text
-            fontWeight="bold"
-            fontSize="subheading"
-            style={styles.mainInfoItem}
-          >
-            {item.fullName}
-          </Text>
-          <View style={styles.mainInfo}>
-            <Text style={styles.mainInfoItem}>{item.description}</Text>
+    <View testID="repositoryItem" style={styles.container}>
+      <Pressable
+        onPress={() => {
+          navigate("/SingleRepository", {
+            state: { repositoryId: item.id },
+          });
+        }}
+      >
+        <View>
+          <View style={styles.content}>
+            <Avatar source={item.ownerAvatarUrl} />
+            <View style={styles.mainInfo}>
+              <Text
+                fontWeight="bold"
+                fontSize="subheading"
+                style={styles.mainInfoItem}
+              >
+                {item.fullName}
+              </Text>
+              <View style={styles.mainInfo}>
+                <Text style={styles.mainInfoItem}>{item.description}</Text>
+              </View>
+              <View style={styles.language}>
+                <Text style={{ color: "white" }}>{item.language}</Text>
+              </View>
+            </View>
           </View>
-          <View style={styles.language}>
-            <Text style={{ color: "white" }}>{item.language}</Text>
+          <View style={styles.content}>
+            <StatItem
+              label={"Stars"}
+              stat={formatNumber(item.stargazersCount)}
+            />
+            <StatItem label={"Forks"} stat={formatNumber(item.forksCount)} />
+            <StatItem label={"Reviews"} stat={item.reviewCount} />
+            <StatItem label={"Rating"} stat={item.ratingAverage} />
           </View>
         </View>
-      </View>
-      <View style={styles.content}>
-        <StatItem label={"Stars"} stat={formatNumber(item.stargazersCount)} />
-        <StatItem label={"Forks"} stat={formatNumber(item.forksCount)} />
-        <StatItem label={"Reviews"} stat={item.reviewCount} />
-        <StatItem label={"Rating"} stat={item.ratingAverage} />
-      </View>
+      </Pressable>
+      {single ? (
+        <View>
+          <Pressable
+            style={styles.button}
+            onPress={() => {
+              Linking.openURL(item.url);
+            }}
+          >
+            <Text fontWeight="bold" style={{ color: theme.colors.tab }}>
+              Open in Git Hub
+            </Text>
+          </Pressable>
+        </View>
+      ) : (
+        <></>
+      )}
     </View>
   );
 };

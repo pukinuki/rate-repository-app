@@ -11,6 +11,25 @@ const styles = StyleSheet.create({
   },
 });
 
+const userLoggedTabs = () => {
+  return (
+    <>
+      <AppBarTab tabName={"Review"} path={"/Review"} />
+      <AppBarTab tabName={"My Reviews"} path={"/MyReviews"} />
+      <AppBarTab tabName={"Sign out"} path={"/SignOut"} />
+    </>
+  );
+};
+
+const userNotLoggedTabs = () => {
+  return (
+    <>
+      <AppBarTab tabName={"Sign Up"} path={"/SignUp"} />
+      <AppBarTab tabName={"Sign in"} path={"/SignIn"} />
+    </>
+  );
+};
+
 const AppBar = () => {
   const me = useMe();
 
@@ -18,11 +37,7 @@ const AppBar = () => {
     <View style={styles.container}>
       <ScrollView horizontal>
         <AppBarTab tabName={"Repositories"} path={"/"} />
-        {me.me ? (
-          <AppBarTab tabName={"Sign out"} path={"/SignOut"} />
-        ) : (
-          <AppBarTab tabName={"Sign in"} path={"/SignIn"} />
-        )}
+        {me.me ? userLoggedTabs() : userNotLoggedTabs()}
       </ScrollView>
     </View>
   );
